@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>CSE Project Hub | Department Project Repository</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary":                    "#A020F0",
+                        "on-primary":                 "#ffffff",
+                        "surface":                    "#F4F5F7",
+                        "surface-container":          "#ffffff",
+                        "surface-bright":             "#EEF0F5",
+                        "secondary":                  "#7D7489",
+                        "outline":                    "#E2DFE9",
+                        "text-main":                  "#2D2635",
+                        "surface-container-lowest":   "#ffffff",
+                        "on-surface-variant":         "#43474f",
+                        "outline-variant":            "#c3c6d1",
+                        "secondary-container":        "#F0E4FF"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body":     ["Inter"],
+                        "label":    ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg":      "0.5rem",
+                        "xl":      "0.75rem",
+                        "full":    "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+
+<body class="bg-surface font-body text-text-main antialiased bg-pattern flex flex-col min-h-screen">
+
+    <!-- ── NAV ────────────────────────────────────────────────────────────── -->
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline transition-all duration-300">
+        <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+            <a class="text-xl font-extrabold text-primary tracking-tighter font-headline" href="#">CSE Project Hub</a>
+        </div>
+    </nav>
+
+    <main class="pt-32 flex-grow">
+
+        <!-- ── HERO ───────────────────────────────────────────────────────── -->
+        <section class="max-w-6xl mx-auto px-6 py-12 text-center">
+            <div class="relative py-20 px-6 md:px-12 rounded-[3rem] md:rounded-[5rem] overflow-hidden backdrop-blur-xl border border-primary/30 shadow-2xl shadow-primary/10 bg-primary/10 hero-glass-container">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-primary/5 pointer-events-none"></div>
+                <div class="relative z-10">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/60 border border-primary/20 text-[10px] font-bold tracking-widest uppercase text-primary mb-6 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        Department of Computer Science &amp; Engineering
+                    </div>
+                    <h1 class="text-4xl md:text-7xl font-headline font-extrabold text-text-main tracking-tight leading-tight mb-8">
+                        Department Project <br/><span class="text-primary drop-shadow-sm">Repository</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-secondary leading-relaxed max-w-2xl mx-auto">
+                        A curated showcase of student-built projects across active semesters. Explore innovations, engineering excellence, and academic research.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── FILTERS ────────────────────────────────────────────────────── -->
+        <section class="max-w-7xl mx-auto px-6 mb-16">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+
+                <!-- Semester buttons -->
+                <div class="flex flex-wrap items-center gap-3" id="semester-filters">
+                    <button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary active" data-sem="all">
+                        All <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-all">0</span>
+                    </button>
+                    <button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S8">
+                        S8 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S8">0</span>
+                    </button>
+                    <button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S6">
+                        S6 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S6">0</span>
+                    </button>
+                    <button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S4">
+                        S4 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S4">0</span>
+                    </button>
+                    <button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S2">
+                        S2 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S2">0</span>
+                    </button>
+                </div>
+
+                <!-- Batch dropdown -->
+                <div class="relative min-w-[200px]" id="custom-batch-dropdown">
+                    <button aria-expanded="false" class="w-full flex items-center justify-between bg-white/80 backdrop-blur-md border border-outline rounded-xl px-5 py-3 text-sm font-headline font-semibold text-text-main focus:ring-4 focus:ring-primary/10 focus:border-primary cursor-pointer outline-none transition-all shadow-sm" id="dropdown-toggle">
+                        <span id="selected-batch-text">All Batches</span>
+                        <span class="material-symbols-outlined text-primary text-xl transition-transform duration-300 group-aria-expanded:rotate-180">expand_more</span>
+                    </button>
+                    <div class="absolute top-full left-0 right-0 mt-2 z-50 invisible opacity-0 translate-y-2 transition-all duration-500 pointer-events-none" id="dropdown-menu" style="transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55);">
+                        <div class="flex flex-col gap-1 max-h-60 overflow-y-auto w-full hide-scrollbar border border-outline rounded-xl bg-white p-1 shadow-lg"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ── CARDS GRID ──────────────────────────────────────────────────── -->
+        <section class="max-w-7xl mx-auto px-6 mb-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cards-grid"></div>
+        </section>
+
+    </main>
+
+    <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+    <footer class="w-full py-12 border-t border-outline bg-white mt-auto">
+        <div class="flex flex-col items-center px-8 max-w-7xl mx-auto space-y-2 text-secondary justify-center">
+            <div class="font-headline font-bold text-primary">CSE Project Hub</div>
+            <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Empowering future engineers</div>
+        </div>
+    </footer>
+
+    <!-- ── MODAL ──────────────────────────────────────────────────────────── -->
+    <div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-8 overflow-hidden" id="project-modal">
+        <div class="absolute inset-0 bg-primary/20 backdrop-blur-md" onclick="closeModal()"></div>
+        <div class="relative w-full max-w-5xl max-h-[92vh] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant/15">
+
+            <!-- Modal header -->
+            <div class="flex items-center justify-between px-8 py-5 border-b border-outline-variant/10 bg-white/95 backdrop-blur-md sticky top-0 z-10">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center px-3 py-1 bg-secondary-container text-primary rounded-full text-[10px] font-bold tracking-widest uppercase font-label" id="modal-semester">S8</span>
+                    <span class="text-secondary font-label text-sm font-medium tracking-tight" id="modal-batch">Academic Year 2024</span>
+                </div>
+                <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-bright transition-colors text-secondary" onclick="closeModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="overflow-y-auto hide-scrollbar flex-1">
+
+                <!-- Image gallery -->
+                <div class="px-8 pt-6 relative group/gallery" id="modal-gallery-container">
+                    <button class="absolute left-10 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/30 backdrop-blur-md text-text-main border border-outline-variant/20 opacity-0 group-hover/gallery:opacity-100 hover:bg-white transition-all duration-300 shadow-sm" onclick="prevSlide()">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 snap-x snap-mandatory" id="modal-images-scroll"></div>
+                    <div class="flex justify-center gap-1.5 mt-2" id="modal-image-dots"></div>
+                    <button class="absolute right-10 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/30 backdrop-blur-md text-text-main border border-outline-variant/20 opacity-0 group-hover/gallery:opacity-100 hover:bg-white transition-all duration-300 shadow-sm" onclick="nextSlide()">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+
+                <!-- Content grid -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-10 px-8 py-10">
+
+                    <!-- Left: title, abstract, team -->
+                    <div class="md:col-span-8 space-y-8">
+                        <div>
+                            <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-primary tracking-tight leading-tight mb-4" id="modal-title">Project Title</h1>
+                        </div>
+                        <section>
+                            <h2 class="font-headline text-lg font-bold text-text-main mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">description</span>
+                                Abstract
+                            </h2>
+                            <p class="text-secondary leading-relaxed text-lg font-light text-justify" id="modal-abstract">Loading...</p>
+                        </section>
+                        <section class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
+                            <div>
+                                <h3 class="font-headline text-sm font-bold text-secondary uppercase tracking-widest mb-4">Project Team</h3>
+                                <div class="flex flex-col gap-3" id="modal-members-list"></div>
+                            </div>
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="font-headline text-sm font-bold text-secondary uppercase tracking-widest mb-2">Faculty Guide</h3>
+                                    <div class="text-primary font-bold" id="modal-faculty">—</div>
+                                    <div class="text-secondary text-sm">Department of CSE</div>
+                                </div>
+                                <div>
+                                    <h3 class="font-headline text-sm font-bold text-secondary uppercase tracking-widest mb-2">Academic Batch</h3>
+                                    <div class="text-text-main font-semibold" id="modal-batch-label">—</div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right: action buttons -->
+                    <div class="md:col-span-4 space-y-6">
+                        <div class="p-6 rounded-xl bg-surface-bright border border-outline/30 space-y-3">
+                            <h3 class="font-headline text-sm font-bold text-secondary uppercase tracking-widest mb-2">Project Assets</h3>
+
+                            <!-- Live URL -->
+                            <a class="w-full flex items-center justify-center gap-3 py-4 px-6 bg-primary text-on-primary rounded-md font-bold shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
+                               id="modal-live-btn" target="_blank" href="#">
+                                <span class="material-symbols-outlined">rocket_launch</span>
+                                View Live Project
+                            </a>
+
+                            <!-- Video Link -->
+                            <a class="w-full flex items-center justify-center gap-3 py-4 px-6 bg-surface-container text-text-main border border-outline rounded-md font-bold hover:bg-surface-bright transition-all active:scale-[0.98]"
+                               id="modal-video-btn" target="_blank" href="#">
+                                <span class="material-symbols-outlined">play_circle</span>
+                                Watch Demo Video
+                            </a>
+
+                            <!-- PDF Link -->
+                            <a class="w-full flex items-center justify-center gap-3 py-4 px-6 bg-surface-container text-text-main border border-outline rounded-md font-bold hover:bg-surface-bright transition-all active:scale-[0.98]"
+                               id="modal-pdf-btn" target="_blank" href="#">
+                                <span class="material-symbols-outlined">picture_as_pdf</span>
+                                View PDF Report
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="px-8 py-4 bg-white border-t border-outline/30 flex justify-end">
+                <button class="px-6 py-2 text-secondary font-semibold hover:text-text-main transition-colors" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SCRIPTS ─────────────────────────────────────────────────────────── -->
+    <script src="js/sheets.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
