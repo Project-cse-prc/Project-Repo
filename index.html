@@ -44,6 +44,9 @@ tailwind.config = {
 };
 </script>
 <style type="text/tailwindcss">
+html {
+    scrollbar-gutter: stable both-edges;
+}
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     vertical-align: middle;
@@ -66,6 +69,14 @@ body {
 .page-shell {
     position: relative;
     z-index: 1;
+}
+.site-container {
+    width: min(calc(100% - 3rem), 80rem);
+    margin-inline: auto;
+}
+.site-container-narrow {
+    width: min(calc(100% - 3rem), 72rem);
+    margin-inline: auto;
 }
 .filter-panel {
     position: relative;
@@ -130,13 +141,56 @@ body {
 }
 .project-card {
     border: 1px solid #E2DFE9;
-    background: #ffffff;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(251, 247, 255, 0.96));
+    box-shadow:
+        0 14px 36px -28px rgba(95, 39, 147, 0.3),
+        0 0 0 1px rgba(160, 32, 240, 0.08);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.project-card-title {
+    padding: 0.95rem 1rem 1rem;
+    margin: -0.25rem -0.25rem 0.75rem;
+    border-radius: 1rem;
+    background:
+        linear-gradient(180deg, rgba(160, 32, 240, 0.08), rgba(160, 32, 240, 0.02)),
+        rgba(255, 255, 255, 0.9);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.85),
+        0 8px 20px -18px rgba(95, 39, 147, 0.3);
+}
+.project-card.reveal-card {
+    opacity: 0;
+    filter: blur(6px);
+    will-change: transform, opacity, filter;
+    transition:
+        opacity 0.34s cubic-bezier(0.2, 0.8, 0.2, 1),
+        transform 0.34s cubic-bezier(0.2, 0.8, 0.2, 1),
+        filter 0.34s ease;
+}
+.project-card.reveal-card.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+.project-card.reveal-rise {
+    transform: translateY(34px) scale(0.975);
+}
+.project-card.reveal-slide-left {
+    transform: translateX(-42px) rotate(-2deg) scale(0.978);
+}
+.project-card.reveal-slide-right {
+    transform: translateX(42px) rotate(2deg) scale(0.978);
+}
+.project-card.reveal-pop {
+    transform: translateY(24px) scale(0.9);
 }
 .project-card:hover {
     border-color: #A020F0;
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(160, 32, 240, 0.15);
+    box-shadow:
+        0 24px 48px -18px rgba(160, 32, 240, 0.22),
+        0 0 0 1px rgba(160, 32, 240, 0.14);
 }
 .sem-btn {
     position: relative;
@@ -526,27 +580,31 @@ body {
     z-index: -1;
     cursor: zoom-out;
 }
+.project-modal-panel {
+    transform-origin: center;
+    will-change: transform, opacity;
+}
 </style>
 </head>
 <body class="bg-surface font-body text-text-main antialiased bg-pattern">
 <canvas aria-hidden="true" class="interactive-dot-field" id="interactive-dot-field"></canvas>
 <div class="page-shell">
 <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline transition-all duration-300">
-<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="site-container flex justify-between items-center py-4">
 <div class="flex items-center gap-8">
 <a class="text-base md:text-lg font-extrabold text-primary tracking-tight font-headline" href="#">Department of Computer Science &amp; Engineering</a>
 </div>
 </div>
 </nav>
 <main class="pt-20 min-h-screen">
-<section class="max-w-6xl mx-auto px-6 pt-3 pb-6 text-center">
+<section class="site-container pt-3 pb-6 text-center">
 <div class="relative py-16 px-6 md:px-12 rounded-[3rem] md:rounded-[5rem] overflow-hidden backdrop-blur-xl border border-primary/30 shadow-2xl shadow-primary/10 bg-primary/10 hero-glass-container" id="hero-repository-card">
 <div class="hero-glass-sheen"></div>
 <div class="hero-glass-orb orb-a"></div>
 <div class="hero-glass-orb orb-b"></div>
 <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-primary/5 pointer-events-none"></div>
 <div class="relative z-10">
-<h1 class="text-4xl md:text-7xl font-headline font-extrabold text-text-main tracking-tight leading-tight mb-8 whitespace-nowrap">
+<h1 class="text-4xl md:text-7xl font-headline font-extrabold text-text-main tracking-tight leading-tight mb-8">
 Project <span class="text-primary drop-shadow-sm">Repository</span>
 </h1>
 <p class="text-lg md:text-xl text-secondary leading-relaxed max-w-2xl mx-auto">
@@ -554,7 +612,7 @@ Project <span class="text-primary drop-shadow-sm">Repository</span>
 </div>
 </div>
 </section>
-<section class="max-w-7xl mx-auto px-6 mb-16">
+<section class="site-container mb-16">
 <div class="filter-panel rounded-[2rem] px-6 py-6 md:px-7">
 <div class="filter-bar">
 <div class="filter-buttons scroll-mt-24" id="semester-filters">
@@ -586,20 +644,20 @@ S2 <span class="count-pill ml-2 text-[10px]" id="count-S2">0</span>
 </div>
 </div>
 </section>
-<section class="max-w-7xl mx-auto px-6 mb-24">
+<section class="site-container mb-24">
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cards-grid">
 </div>
 </section>
 </main>
 <footer class="w-full py-12 border-t border-outline bg-white">
-<div class="flex flex-col items-center px-8 max-w-7xl mx-auto space-y-4 md:space-y-0 text-secondary justify-center">
+<div class="site-container flex flex-col items-center px-2 space-y-4 md:space-y-0 text-secondary justify-center">
 <div class="font-headline font-bold text-primary">Project Hub</div>
 <div class="text-[10px] uppercase tracking-widest font-bold opacity-60">Empowering future engineers</div>
 </div>
 </footer>
 <div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-6 overflow-hidden" id="project-modal">
 <div class="absolute inset-0 bg-primary/25 backdrop-blur-sm" id="modal-backdrop" onclick="closeModal()"></div>
-<div class="relative w-full max-w-6xl max-h-[95vh] bg-surface-container-lowest rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant/15">
+<div class="project-modal-panel relative w-full max-w-6xl max-h-[95vh] bg-surface-container-lowest rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant/15">
 <div class="flex items-center justify-between px-8 py-5 border-b border-outline-variant/10 bg-surface-container-lowest/95 backdrop-blur-md sticky top-0 z-10 transition-all duration-500" id="modal-header">
 <div class="flex items-center gap-3">
 <span class="inline-flex items-center px-3 py-1 bg-secondary-container text-primary rounded-full text-[10px] font-bold tracking-widest uppercase font-label" id="modal-semester">S8</span>
@@ -719,6 +777,9 @@ let allProjects = [];
 let currentBatch = "all";
 let modalImageIndex = 0;
 let modalImages = [];
+let projectCardRevealObserver;
+let modalAnimationToken = 0;
+let isModalClosing = false;
 
 async function loadAllProjects() {
     const grid = document.getElementById("cards-grid");
@@ -830,6 +891,8 @@ function updateCounts() {
 
 function renderCards(projects) {
     const grid = document.getElementById("cards-grid");
+    const revealVariants = ["reveal-rise", "reveal-slide-left", "reveal-slide-right", "reveal-pop"];
+
     if (projects.length === 0) {
         grid.innerHTML = `
             <div class="col-span-full py-20 text-center text-secondary">
@@ -845,9 +908,10 @@ function renderCards(projects) {
         const firstImage = p.imageURLs ? p.imageURLs.split(",")[0].trim() : "";
         const isAvailable = p.availability.toLowerCase() === "available";
         const availColor = isAvailable ? "bg-green-500" : "bg-red-500";
+        const revealVariant = revealVariants[originalIndex % revealVariants.length];
 
         return `
-            <div class="project-card flex flex-col rounded-[1.5rem] overflow-hidden cursor-pointer group" onclick="openModal(${originalIndex})">
+            <div class="project-card reveal-card ${revealVariant} flex flex-col rounded-[1.5rem] overflow-hidden cursor-pointer group" onclick="openModal(${originalIndex})">
 <div class="h-40 bg-surface-bright relative overflow-hidden">
                     ${firstImage
                         ? `<img alt="${p.projectName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="${firstImage}"/>`
@@ -862,7 +926,9 @@ function renderCards(projects) {
 </div>
 </div>
 <div class="p-4 flex-grow flex flex-col">
-<h3 class="text-lg font-headline font-extrabold text-text-main mb-3 line-clamp-2 group-hover:text-primary transition-colors">${p.projectName}</h3>
+<div class="project-card-title">
+<h3 class="text-xl font-headline font-extrabold text-text-main line-clamp-2 group-hover:text-primary transition-colors">${p.projectName}</h3>
+</div>
 <div class="mt-auto pt-4 border-t border-outline flex items-center justify-between text-secondary">
 <div class="flex flex-col">
 <span class="text-[8px] font-bold text-primary/60 uppercase tracking-widest mb-0.5">Faculty Guide</span>
@@ -874,6 +940,8 @@ function renderCards(projects) {
 </div>
         `;
     }).join("");
+
+    initializeProjectCardReveal();
 }
 
 function applyFilters() {
@@ -884,6 +952,34 @@ function applyFilters() {
         return matchBatch && matchSem;
     });
     renderCards(filtered);
+}
+
+function initializeProjectCardReveal() {
+    const cards = document.querySelectorAll(".project-card.reveal-card");
+
+    if (projectCardRevealObserver) {
+        projectCardRevealObserver.disconnect();
+    }
+
+    if (!("IntersectionObserver" in window)) {
+        cards.forEach((card) => card.classList.add("is-visible"));
+        return;
+    }
+
+    projectCardRevealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            entry.target.classList.toggle("is-visible", entry.isIntersecting);
+        });
+    }, {
+        threshold: 0.12,
+        rootMargin: "-4% 0px -10% 0px"
+    });
+
+    cards.forEach((card, index) => {
+        card.classList.remove("is-visible");
+        card.style.transitionDelay = `${Math.min(index * 35, 140)}ms`;
+        projectCardRevealObserver.observe(card);
+    });
 }
 
 function toggleGalleryExpansion() {
@@ -917,6 +1013,9 @@ function openModal(index) {
     if (!p) {
         return;
     }
+
+    modalAnimationToken += 1;
+    isModalClosing = false;
 
     document.getElementById("modal-semester").textContent = p.semester;
     document.getElementById("modal-batch").textContent = `Academic Year ${p.batch}`;
@@ -980,8 +1079,42 @@ function openModal(index) {
         availText.textContent = "This project is currently assigned or unavailable.";
     }
 
-    document.getElementById("project-modal").classList.remove("hidden");
+    const modal = document.getElementById("project-modal");
+    const backdrop = document.getElementById("modal-backdrop");
+    const panel = modal.querySelector(".project-modal-panel");
+
+    modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+
+    backdrop.animate([
+        {
+            opacity: 0,
+            backdropFilter: "blur(0px)"
+        },
+        {
+            opacity: 1,
+            backdropFilter: "blur(4px)"
+        }
+    ], {
+        duration: 170,
+        easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        fill: "both"
+    });
+
+    panel.animate([
+        {
+            opacity: 0,
+            transform: "translateY(18px) scale(0.965)"
+        },
+        {
+            opacity: 1,
+            transform: "translateY(0) scale(1)"
+        }
+    ], {
+        duration: 220,
+        easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        fill: "both"
+    });
 
     const container = document.getElementById("project-container");
     if (container.classList.contains("is-expanded")) {
@@ -989,9 +1122,60 @@ function openModal(index) {
     }
 }
 
-function closeModal() {
-    document.getElementById("project-modal").classList.add("hidden");
+async function closeModal() {
+    const modal = document.getElementById("project-modal");
+
+    if (modal.classList.contains("hidden") || isModalClosing) {
+        return;
+    }
+
+    isModalClosing = true;
+    const animationToken = ++modalAnimationToken;
+    const backdrop = document.getElementById("modal-backdrop");
+    const panel = modal.querySelector(".project-modal-panel");
+
+    const backdropAnimation = backdrop.animate([
+        {
+            opacity: 1,
+            backdropFilter: "blur(4px)"
+        },
+        {
+            opacity: 0,
+            backdropFilter: "blur(0px)"
+        }
+    ], {
+        duration: 150,
+        easing: "cubic-bezier(0.4, 0, 1, 1)",
+        fill: "both"
+    });
+
+    const panelAnimation = panel.animate([
+        {
+            opacity: 1,
+            transform: "translateY(0) scale(1)"
+        },
+        {
+            opacity: 0,
+            transform: "translateY(14px) scale(0.975)"
+        }
+    ], {
+        duration: 170,
+        easing: "cubic-bezier(0.4, 0, 1, 1)",
+        fill: "both"
+    });
+
+    await Promise.all([
+        backdropAnimation.finished.catch(() => undefined),
+        panelAnimation.finished.catch(() => undefined)
+    ]);
+
+    if (animationToken !== modalAnimationToken) {
+        return;
+    }
+
+    modal.classList.add("hidden");
     document.body.style.overflow = "";
+    isModalClosing = false;
 }
 
 function updateModalImage() {
