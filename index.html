@@ -49,14 +49,84 @@ tailwind.config = {
     vertical-align: middle;
 }
 .bg-pattern {
-    background-image: radial-gradient(#d1c9e0 1px, transparent 1px);
-    background-size: 24px 24px;
+    background-color: #F4F5F7;
+}
+body {
+    position: relative;
+    isolation: isolate;
+}
+.interactive-dot-field {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+.page-shell {
+    position: relative;
+    z-index: 1;
+}
+.filter-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(160, 32, 240, 0.14);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.68)),
+        linear-gradient(180deg, rgba(160, 32, 240, 0.05), transparent 56%);
+    backdrop-filter: blur(18px) saturate(155%);
+    -webkit-backdrop-filter: blur(18px) saturate(155%);
+    box-shadow: 0 28px 60px -40px rgba(95, 39, 147, 0.34);
+}
+.filter-panel::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.28), transparent 26%, transparent 74%, rgba(255, 255, 255, 0.16));
+    pointer-events: none;
+}
+.filter-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+}
+.impact-button {
+    transform: translateY(0) scale(1);
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease,
+        background-color 0.22s ease,
+        color 0.22s ease;
+    will-change: transform;
+}
+.impact-button:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+.impact-button:active {
+    transform: translateY(1px) scale(0.985);
 }
 .sem-btn.active {
-    background-color: #A020F0;
+    background:
+        linear-gradient(135deg, rgba(186, 88, 248, 0.96), rgba(160, 32, 240, 0.96)),
+        #A020F0;
     color: white;
     box-shadow: 0 10px 20px -5px rgba(160, 32, 240, 0.4);
     border-color: #A020F0;
+}
+.sem-btn.active::before,
+.sem-btn.active::after {
+    opacity: 0;
 }
 .project-card {
     border: 1px solid #E2DFE9;
@@ -70,7 +140,196 @@ tailwind.config = {
 }
 .sem-btn {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 5.9rem;
+    min-height: 2.8rem;
     overflow: hidden;
+    isolation: isolate;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.48)),
+        linear-gradient(160deg, rgba(160, 32, 240, 0.09), rgba(255, 255, 255, 0.18) 58%, rgba(160, 32, 240, 0.06));
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+        0 14px 30px -18px rgba(95, 39, 147, 0.35);
+}
+.sem-btn::before,
+#dropdown-toggle::before,
+.dropdown-option::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.34), transparent 28%, transparent 74%, rgba(255, 255, 255, 0.16)),
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.26), transparent 42%);
+    pointer-events: none;
+    z-index: 0;
+}
+.sem-btn::after,
+#dropdown-toggle::after,
+.dropdown-option::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.18) 38%, rgba(255, 255, 255, 0.03) 50%, transparent 68%);
+    opacity: 0.85;
+    transform: translateX(-42%);
+    transition: transform 0.45s ease, opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+.sem-btn:hover::after,
+#dropdown-toggle:hover::after,
+.dropdown-option:hover::after {
+    transform: translateX(30%);
+}
+.sem-btn > *,
+#dropdown-toggle > *,
+.dropdown-option > * {
+    position: relative;
+    z-index: 1;
+}
+.count-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.45rem;
+    min-height: 1.45rem;
+    padding: 0 0.35rem;
+    border-radius: 9999px;
+    background: rgba(238, 240, 245, 0.88);
+    color: #7d7489;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+.sem-btn.active .count-pill {
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.94);
+}
+#dropdown-toggle,
+.dropdown-option {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.5)),
+        linear-gradient(160deg, rgba(160, 32, 240, 0.11), rgba(255, 255, 255, 0.16) 56%, rgba(160, 32, 240, 0.07));
+    backdrop-filter: blur(20px) saturate(155%);
+    -webkit-backdrop-filter: blur(20px) saturate(155%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+        0 16px 32px -22px rgba(95, 39, 147, 0.34);
+}
+#dropdown-toggle {
+    min-height: 2.95rem;
+    min-width: 12.6rem;
+    border-radius: 9999px;
+    padding-left: 1.25rem;
+    padding-right: 1.1rem;
+}
+.dropdown-option {
+    border-radius: 9999px;
+}
+#dropdown-toggle:hover,
+.dropdown-option:hover {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.76),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+        0 18px 36px -20px rgba(95, 39, 147, 0.38);
+}
+#batch-filter {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+#batch-filter:hover {
+    box-shadow: none;
+}
+#batch-filter::-ms-expand {
+    display: none;
+}
+#batch-filter-shell {
+    position: relative;
+    border-radius: 9999px;
+    border: 1px solid rgba(160, 32, 240, 0.26);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.68)),
+        linear-gradient(160deg, rgba(160, 32, 240, 0.12), rgba(255, 255, 255, 0.12) 58%, rgba(160, 32, 240, 0.07));
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        0 0 0 4px rgba(160, 32, 240, 0.08),
+        0 18px 38px -24px rgba(95, 39, 147, 0.42);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+#batch-filter-shell:hover,
+#batch-filter-shell:focus-within {
+    border-color: rgba(160, 32, 240, 0.46);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.88),
+        0 0 0 5px rgba(160, 32, 240, 0.12),
+        0 22px 42px -24px rgba(95, 39, 147, 0.48);
+    transform: translateY(-1px);
+}
+#batch-filter-shell:active {
+    transform: translateY(1px) scale(0.99);
+}
+.impact-button.sem-btn:hover {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+        0 20px 36px -22px rgba(95, 39, 147, 0.28);
+}
+.impact-button.sem-btn:active {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+        0 8px 16px -12px rgba(95, 39, 147, 0.18);
+}
+.impact-button.sem-btn.active:hover {
+    box-shadow: 0 16px 30px -12px rgba(160, 32, 240, 0.34);
+}
+.impact-button.sem-btn.active:active {
+    box-shadow: 0 8px 16px -10px rgba(160, 32, 240, 0.28);
+}
+.impact-button.asset-link:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 18px 34px -20px rgba(95, 39, 147, 0.24);
+}
+.impact-button.asset-link:active {
+    transform: translateY(1px) scale(0.99);
+}
+.impact-button.icon-button:hover {
+    transform: translateY(-2px) scale(1.06);
+}
+.impact-button.icon-button:active {
+    transform: translateY(1px) scale(0.94);
+}
+@media (max-width: 900px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-buttons {
+        gap: 0.75rem;
+    }
+    #dropdown-toggle,
+    #custom-batch-dropdown,
+    #batch-filter,
+    #batch-filter-shell {
+        width: 100%;
+    }
 }
 .ripple {
     position: absolute;
@@ -79,6 +338,7 @@ tailwind.config = {
     animation: ripple-effect 600ms linear;
     background-color: rgba(255, 255, 255, 0.7);
     pointer-events: none;
+    z-index: 2;
 }
 @keyframes ripple-effect {
     to {
@@ -101,28 +361,93 @@ tailwind.config = {
 }
 .hero-glass-container {
     position: relative;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+    isolation: isolate;
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --glow-opacity: 0;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08)),
+        linear-gradient(160deg, rgba(160, 32, 240, 0.16), rgba(255, 255, 255, 0.08) 52%, rgba(160, 32, 240, 0.1));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+        0 24px 60px -22px rgba(95, 39, 147, 0.34);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
 }
 .hero-glass-container:hover {
     transform: translateY(-4px);
-    box-shadow: 0 30px 60px -12px rgba(160, 32, 240, 0.15);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.58),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+        0 34px 70px -22px rgba(95, 39, 147, 0.38);
 }
 .hero-glass-container::before {
     content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 200%;
-    padding-bottom: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-    transform: translate(-50%, -50%) scale(0);
-    border-radius: 50%;
+    inset: 0;
+    background:
+        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18) 14%, rgba(255, 255, 255, 0.05) 28%, transparent 52%);
     pointer-events: none;
     z-index: 0;
-    opacity: 0;
+    opacity: var(--glow-opacity);
+    transition: opacity 180ms ease;
 }
 .hero-glass-container:hover::before {
-    animation: soft-ripple 3s infinite;
+    opacity: var(--glow-opacity);
+}
+.hero-glass-container::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.35), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.18)),
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 42%);
+    mix-blend-mode: screen;
+    opacity: 0.75;
+    pointer-events: none;
+    z-index: 0;
+}
+.hero-glass-sheen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.18) 36%, rgba(255, 255, 255, 0.04) 48%, transparent 64%);
+    transform: translateX(-35%);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 0;
+}
+.hero-glass-container:hover .hero-glass-sheen {
+    animation: hero-sheen 4.5s ease-in-out infinite;
+}
+.hero-glass-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(4px);
+    pointer-events: none;
+    z-index: 0;
+}
+.hero-glass-orb.orb-a {
+    width: 12rem;
+    height: 12rem;
+    top: -4rem;
+    right: 8%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 62%, transparent 72%);
+}
+.hero-glass-orb.orb-b {
+    width: 10rem;
+    height: 10rem;
+    bottom: -3rem;
+    left: 10%;
+    background: radial-gradient(circle, rgba(160, 32, 240, 0.2), rgba(160, 32, 240, 0.03) 65%, transparent 74%);
+}
+@keyframes hero-sheen {
+    0%, 100% {
+        transform: translateX(-35%);
+    }
+    50% {
+        transform: translateX(35%);
+    }
 }
 #dropdown-menu.show {
     visibility: visible;
@@ -204,61 +529,59 @@ tailwind.config = {
 </style>
 </head>
 <body class="bg-surface font-body text-text-main antialiased bg-pattern">
+<canvas aria-hidden="true" class="interactive-dot-field" id="interactive-dot-field"></canvas>
+<div class="page-shell">
 <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline transition-all duration-300">
 <div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
 <div class="flex items-center gap-8">
-<a class="text-xl font-extrabold text-primary tracking-tighter font-headline" href="#">Project Hub</a>
+<a class="text-base md:text-lg font-extrabold text-primary tracking-tight font-headline" href="#">Department of Computer Science &amp; Engineering</a>
 </div>
 </div>
 </nav>
-<main class="pt-32 min-h-screen">
-<section class="max-w-6xl mx-auto px-6 py-12 text-center">
-<div class="relative py-20 px-6 md:px-12 rounded-[3rem] md:rounded-[5rem] overflow-hidden backdrop-blur-xl border border-primary/30 shadow-2xl shadow-primary/10 bg-primary/10 hero-glass-container">
+<main class="pt-20 min-h-screen">
+<section class="max-w-6xl mx-auto px-6 pt-3 pb-6 text-center">
+<div class="relative py-16 px-6 md:px-12 rounded-[3rem] md:rounded-[5rem] overflow-hidden backdrop-blur-xl border border-primary/30 shadow-2xl shadow-primary/10 bg-primary/10 hero-glass-container" id="hero-repository-card">
+<div class="hero-glass-sheen"></div>
+<div class="hero-glass-orb orb-a"></div>
+<div class="hero-glass-orb orb-b"></div>
 <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-primary/5 pointer-events-none"></div>
 <div class="relative z-10">
-<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/60 border border-primary/20 text-[10px] font-bold tracking-widest uppercase text-primary mb-6 shadow-sm">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-Department of Computer Science &amp; Engineering
-</div>
-<h1 class="text-4xl md:text-7xl font-headline font-extrabold text-text-main tracking-tight leading-tight mb-8">
-Department Project <br/><span class="text-primary drop-shadow-sm">Repository</span>
+<h1 class="text-4xl md:text-7xl font-headline font-extrabold text-text-main tracking-tight leading-tight mb-8 whitespace-nowrap">
+Project <span class="text-primary drop-shadow-sm">Repository</span>
 </h1>
 <p class="text-lg md:text-xl text-secondary leading-relaxed max-w-2xl mx-auto">
-A curated showcase of student-built projects across active semesters. Explore innovations, engineering excellence, and academic research.
 </p>
 </div>
 </div>
 </section>
 <section class="max-w-7xl mx-auto px-6 mb-16">
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-<div class="flex flex-wrap items-center gap-3 scroll-mt-24" id="semester-filters">
-<button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary active" data-sem="all">
-All <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-all">0</span>
+<div class="filter-panel rounded-[2rem] px-6 py-6 md:px-7">
+<div class="filter-bar">
+<div class="filter-buttons scroll-mt-24" id="semester-filters">
+<button class="sem-btn impact-button px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary active" data-sem="all">
+All <span class="count-pill ml-2 text-[10px]" id="count-all">0</span>
 </button>
-<button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S8">
-S8 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S8">0</span>
+<button class="sem-btn impact-button px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S8">
+S8 <span class="count-pill ml-2 text-[10px]" id="count-S8">0</span>
 </button>
-<button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S6">
-S6 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S6">0</span>
+<button class="sem-btn impact-button px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S6">
+S6 <span class="count-pill ml-2 text-[10px]" id="count-S6">0</span>
 </button>
-<button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S4">
-S4 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S4">0</span>
+<button class="sem-btn impact-button px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S4">
+S4 <span class="count-pill ml-2 text-[10px]" id="count-S4">0</span>
 </button>
-<button class="sem-btn px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S2">
-S2 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id="count-S2">0</span>
+<button class="sem-btn impact-button px-6 py-2.5 rounded-full bg-white border border-outline text-secondary font-headline font-bold text-sm transition-all hover:border-primary/50 hover:text-primary" data-sem="S2">
+S2 <span class="count-pill ml-2 text-[10px]" id="count-S2">0</span>
 </button>
 </div>
 <div class="relative min-w-[200px]">
-<div class="relative group" id="custom-batch-dropdown">
-<button aria-expanded="false" class="w-full flex items-center justify-between bg-white/80 backdrop-blur-md border border-outline rounded-xl px-5 py-3 text-sm font-headline font-semibold text-text-main focus:ring-4 focus:ring-primary/10 focus:border-primary cursor-pointer outline-none transition-all shadow-sm group" id="dropdown-toggle">
-<span id="selected-batch-text">All Year</span>
-<span class="material-symbols-outlined text-primary text-xl transition-transform duration-300 group-aria-expanded:rotate-180">expand_more</span>
-</button>
-<div class="absolute top-full left-0 right-0 mt-2 z-50 invisible opacity-0 translate-y-2 transition-all duration-500 pointer-events-none" id="dropdown-menu" style="transition-timing-function: cubic-bezier(0.68, -0.55, 0.26, 1.55);">
-<div class="flex flex-col gap-1">
-<div class="dropdown-option opacity-0 translate-y-4 transition-all duration-300 bg-white border border-outline rounded-xl px-5 py-3 text-sm font-headline font-semibold text-text-main hover:bg-primary/5 hover:border-primary/30 cursor-pointer shadow-sm" data-value="all" style="transition-delay: 50ms;">All Year</div>
+<div class="relative" id="batch-filter-shell">
+<select class="w-full rounded-full px-5 py-3 pr-12 text-sm font-headline font-semibold text-text-main cursor-pointer outline-none transition-all focus:ring-0" id="batch-filter">
+<option value="all">All Year</option>
+</select>
+<span aria-hidden="true" class="material-symbols-outlined pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-primary text-[20px] opacity-80">expand_more</span>
 </div>
-</div>
+<p class="mt-2 px-1 text-xs font-medium text-secondary/80 hidden" id="batch-filter-note"></p>
 </div>
 </div>
 </div>
@@ -282,7 +605,7 @@ S2 <span class="ml-2 px-1.5 py-0.5 rounded-md bg-surface-bright text-[10px]" id=
 <span class="inline-flex items-center px-3 py-1 bg-secondary-container text-primary rounded-full text-[10px] font-bold tracking-widest uppercase font-label" id="modal-semester">S8</span>
 <span class="text-secondary font-label text-sm font-medium tracking-tight" id="modal-batch">Academic Year 2024</span>
 </div>
-<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-bright transition-colors text-secondary" onclick="closeModal()">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-bright transition-colors text-secondary impact-button icon-button" onclick="closeModal()">
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
@@ -335,14 +658,14 @@ Loading abstract...
 </div>
 </div>
 <div class="nav-arrows absolute inset-0 flex items-center justify-between px-8 md:px-24 pointer-events-none">
-<button class="pointer-events-auto w-16 h-16 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/25 hover:scale-110 active:scale-90 transition-all shadow-2xl" id="modal-prev-btn" onclick="event.stopPropagation(); modalPrevSlide();">
+<button class="pointer-events-auto w-16 h-16 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/25 hover:scale-110 active:scale-90 transition-all shadow-2xl impact-button icon-button" id="modal-prev-btn" onclick="event.stopPropagation(); modalPrevSlide();">
 <span class="material-symbols-outlined text-4xl">chevron_left</span>
 </button>
-<button class="pointer-events-auto w-16 h-16 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/25 hover:scale-110 active:scale-90 transition-all shadow-2xl" id="modal-next-btn" onclick="event.stopPropagation(); modalNextSlide();">
+<button class="pointer-events-auto w-16 h-16 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/25 hover:scale-110 active:scale-90 transition-all shadow-2xl impact-button icon-button" id="modal-next-btn" onclick="event.stopPropagation(); modalNextSlide();">
 <span class="material-symbols-outlined text-4xl">chevron_right</span>
 </button>
 </div>
-<button class="absolute top-10 right-10 opacity-0 group-[.is-expanded]:opacity-100 transition-all duration-500 w-14 h-14 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/30 hover:rotate-90 pointer-events-none group-[.is-expanded]:pointer-events-auto z-[60]" onclick="event.stopPropagation(); toggleGalleryExpansion(event);">
+<button class="absolute top-10 right-10 opacity-0 group-[.is-expanded]:opacity-100 transition-all duration-500 w-14 h-14 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/30 hover:rotate-90 pointer-events-none group-[.is-expanded]:pointer-events-auto z-[60] impact-button icon-button" onclick="event.stopPropagation(); toggleGalleryExpansion(event);">
 <span class="material-symbols-outlined text-3xl">close</span>
 </button>
 <div class="absolute bottom-16 left-1/2 -translate-x-1/2 opacity-0 group-[.is-expanded]:opacity-100 transition-all transform translate-y-8 group-[.is-expanded]:translate-y-0 duration-800 delay-300 pointer-events-none w-max">
@@ -355,15 +678,15 @@ Loading abstract...
 <div class="p-6 rounded-xl bg-surface-bright border border-outline/30 space-y-4 layout-transition action-buttons-box">
 <h3 class="font-headline text-sm font-bold text-secondary uppercase tracking-widest">Project Assets</h3>
 <div class="grid grid-cols-1 gap-4">
-<a class="w-full flex items-center justify-center gap-3 py-4 px-6 bg-primary text-on-primary rounded-md font-bold shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]" id="modal-live-btn" target="_blank">
+<a class="w-full flex items-center justify-center gap-3 py-4 px-6 bg-primary text-on-primary rounded-md font-bold shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] impact-button asset-link" id="modal-live-btn" target="_blank">
 <span class="material-symbols-outlined">rocket_launch</span>
 <span class="truncate">View Live Project</span>
 </a>
-<a class="hidden w-full flex items-center justify-center gap-3 py-4 px-6 bg-surface-container text-text-main border border-outline rounded-md font-bold hover:bg-surface-bright transition-all active:scale-[0.98]" id="modal-video-btn" target="_blank">
+<a class="hidden w-full flex items-center justify-center gap-3 py-4 px-6 bg-surface-container text-text-main border border-outline rounded-md font-bold hover:bg-surface-bright transition-all active:scale-[0.98] impact-button asset-link" id="modal-video-btn" target="_blank">
 <span class="material-symbols-outlined">play_circle</span>
 <span class="truncate">Project Video</span>
 </a>
-<a class="hidden w-full flex items-center justify-center gap-3 py-4 px-6 bg-surface-container text-text-main border border-outline rounded-md font-bold hover:bg-surface-bright transition-all active:scale-[0.98]" id="modal-pdf-btn" target="_blank">
+<a class="hidden w-full flex items-center justify-center gap-3 py-4 px-6 bg-surface-container text-text-main border border-outline rounded-md font-bold hover:bg-surface-bright transition-all active:scale-[0.98] impact-button asset-link" id="modal-pdf-btn" target="_blank">
 <span class="material-symbols-outlined">description</span>
 <span class="truncate">Project PDF</span>
 </a>
@@ -384,7 +707,8 @@ Loading abstract...
 </div>
 </div>
 <div class="px-8 py-4 bg-surface-container-lowest border-t border-outline-variant/10 flex justify-end gap-3 transition-all duration-500" id="modal-footer">
-<button class="px-6 py-2 text-secondary font-semibold hover:text-text-main transition-colors" onclick="closeModal()">Close</button>
+<button class="px-6 py-2 text-secondary font-semibold hover:text-text-main transition-colors impact-button" onclick="closeModal()">Close</button>
+</div>
 </div>
 </div>
 </div>
@@ -470,20 +794,27 @@ async function fetchAllProjects() {
 
 function setupBatchDropdown() {
     const batches = [...new Set(allProjects.map((project) => project.batch).filter(Boolean))].sort().reverse();
-    const menuList = document.querySelector("#dropdown-menu > div");
-    menuList.innerHTML = "";
+    const select = document.getElementById("batch-filter");
+    const note = document.getElementById("batch-filter-note");
+    select.innerHTML = "";
 
     const options = [{ value: "all", label: "All Year" }, ...batches.map((batch) => ({ value: batch, label: batch }))];
-    options.forEach((option, index) => {
-        const optionEl = document.createElement("div");
-        optionEl.className = "dropdown-option opacity-0 translate-y-4 transition-all duration-300 bg-white border border-outline rounded-xl px-5 py-3 text-sm font-headline font-semibold text-text-main hover:bg-primary/5 hover:border-primary/30 cursor-pointer shadow-sm";
-        optionEl.dataset.value = option.value;
-        optionEl.style.transitionDelay = `${(index + 1) * 50}ms`;
+    options.forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.value;
         optionEl.textContent = option.label;
-        menuList.appendChild(optionEl);
+        select.appendChild(optionEl);
     });
 
-    bindDropdownOptions();
+    currentBatch = "all";
+    select.value = "all";
+    note.classList.add("hidden");
+    note.textContent = "";
+
+    if (batches.length === 0) {
+        note.textContent = "No batch values were found in Google Sheets.";
+        note.classList.remove("hidden");
+    }
 }
 
 function updateCounts() {
@@ -712,15 +1043,131 @@ function createRipple(event) {
     }, 600);
 }
 
+function initializeHeroLighting() {
+    const heroCard = document.getElementById("hero-repository-card");
+    if (!heroCard) {
+        return;
+    }
+
+    const updateLightPosition = (event) => {
+        const bounds = heroCard.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+        const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+
+        heroCard.style.setProperty("--pointer-x", `${Math.max(0, Math.min(100, x))}%`);
+        heroCard.style.setProperty("--pointer-y", `${Math.max(0, Math.min(100, y))}%`);
+        heroCard.style.setProperty("--glow-opacity", "1");
+    };
+
+    heroCard.addEventListener("pointermove", updateLightPosition);
+    heroCard.addEventListener("pointerenter", updateLightPosition);
+    heroCard.addEventListener("pointerleave", () => {
+        heroCard.style.setProperty("--glow-opacity", "0");
+        heroCard.style.setProperty("--pointer-x", "50%");
+        heroCard.style.setProperty("--pointer-y", "50%");
+    });
+}
+
+function initializeInteractiveDotField() {
+    const canvas = document.getElementById("interactive-dot-field");
+    if (!canvas) {
+        return;
+    }
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+        return;
+    }
+
+    const pointer = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        active: false
+    };
+
+    let animationFrameId = 0;
+    let dotSpacing = 24;
+    let dotRadius = 1.15;
+    let repelRadius = 140;
+    let maxOffset = 16;
+    let columns = 0;
+    let rows = 0;
+
+    const resizeCanvas = () => {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        dotSpacing = window.innerWidth < 768 ? 22 : 24;
+        dotRadius = window.innerWidth < 768 ? 1 : 1.15;
+        repelRadius = window.innerWidth < 768 ? 118 : 148;
+        maxOffset = window.innerWidth < 768 ? 14 : 17;
+        columns = Math.ceil(window.innerWidth / dotSpacing) + 2;
+        rows = Math.ceil(window.innerHeight / dotSpacing) + 2;
+    };
+
+    const draw = () => {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        context.fillStyle = "rgba(106, 54, 181, 0.4)";
+
+        for (let row = 0; row < rows; row += 1) {
+            for (let column = 0; column < columns; column += 1) {
+                const baseX = column * dotSpacing;
+                const baseY = row * dotSpacing;
+                let x = baseX;
+                let y = baseY;
+
+                if (pointer.active) {
+                    const dx = baseX - pointer.x;
+                    const dy = baseY - pointer.y;
+                    const distance = Math.hypot(dx, dy);
+
+                    if (distance < repelRadius && distance > 0.001) {
+                        const force = 1 - (distance / repelRadius);
+                        const offset = force * maxOffset;
+                        x += (dx / distance) * offset;
+                        y += (dy / distance) * offset;
+                    }
+                }
+
+                context.beginPath();
+                context.arc(x, y, dotRadius, 0, Math.PI * 2);
+                context.fill();
+            }
+        }
+
+        animationFrameId = window.requestAnimationFrame(draw);
+    };
+
+    resizeCanvas();
+    draw();
+
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("pointermove", (event) => {
+        pointer.x = event.clientX;
+        pointer.y = event.clientY;
+        pointer.active = true;
+    }, { passive: true });
+    window.addEventListener("pointerleave", () => {
+        pointer.active = false;
+    });
+    window.addEventListener("blur", () => {
+        pointer.active = false;
+    });
+    window.addEventListener("beforeunload", () => {
+        window.cancelAnimationFrame(animationFrameId);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadAllProjects();
+    initializeInteractiveDotField();
+    initializeHeroLighting();
 
-    setupDropdownToggle();
-
-    document.addEventListener("click", () => {
-        document.getElementById("dropdown-menu").classList.remove("show");
-        document.getElementById("dropdown-toggle").setAttribute("aria-expanded", "false");
-    });
+    setupBatchFilter();
 
     document.querySelectorAll(".sem-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -752,34 +1199,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function bindDropdownOptions() {
-    const toggle = document.getElementById("dropdown-toggle");
-    const menu = document.getElementById("dropdown-menu");
-    const selectedText = document.getElementById("selected-batch-text");
+function setupBatchFilter() {
+    const select = document.getElementById("batch-filter");
 
-    document.querySelectorAll(".dropdown-option").forEach((option) => {
-        option.addEventListener("click", () => {
-            currentBatch = option.dataset.value;
-            selectedText.textContent = option.textContent;
-            menu.classList.remove("show");
-            toggle.setAttribute("aria-expanded", "false");
-            applyFilters();
-        });
+    if (!select) {
+        return;
+    }
+
+    select.addEventListener("change", () => {
+        currentBatch = select.value;
+        applyFilters();
     });
-}
-
-function setupDropdownToggle() {
-    const toggle = document.getElementById("dropdown-toggle");
-    const menu = document.getElementById("dropdown-menu");
-
-    toggle.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const isExpanded = toggle.getAttribute("aria-expanded") === "true";
-        toggle.setAttribute("aria-expanded", String(!isExpanded));
-        menu.classList.toggle("show");
-    });
-
-    bindDropdownOptions();
 }
 </script>
 </body>
