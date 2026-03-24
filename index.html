@@ -146,7 +146,10 @@ body {
     box-shadow:
         0 14px 36px -28px rgba(95, 39, 147, 0.3),
         0 0 0 1px rgba(160, 32, 240, 0.08);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition:
+        transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 0.24s ease,
+        border-color 0.24s ease;
 }
 .project-card-title {
     padding: 0.95rem 1rem 1rem;
@@ -521,7 +524,7 @@ body {
     scrollbar-width: none;
 }
 .layout-transition {
-    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 #project-container.is-expanded .main-content-col {
     opacity: 0;
@@ -535,6 +538,9 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100vw;
     height: 100vh;
     z-index: 50;
@@ -546,17 +552,39 @@ body {
     border-color: transparent;
     box-shadow: none;
 }
+#project-container.is-expanded .gallery-image-frame {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
 #project-container.is-expanded .gallery-trigger img {
     object-fit: contain;
-    width: 90%;
-    height: 85%;
+    width: auto;
+    height: auto;
+    max-width: 92vw;
+    max-height: 88vh;
     padding: 0;
-    transform: scale(1.05);
+    transform: none;
 }
 #project-container.is-expanded .gallery-trigger .nav-arrows {
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
+    z-index: 65;
+}
+.nav-arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.nav-arrow-btn.prev {
+    left: 2rem;
+}
+.nav-arrow-btn.next {
+    right: 2rem;
 }
 #project-container.is-expanded .action-buttons-box,
 #project-container.is-expanded .availability-box {
@@ -568,10 +596,11 @@ body {
     opacity: 0;
     pointer-events: none;
     transform: translateY(20px);
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.3s;
+    transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) 0.08s;
+    z-index: 10;
 }
 .gallery-trigger {
-    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.26s ease;
     z-index: 20;
 }
 .close-zone {
@@ -583,6 +612,74 @@ body {
 .project-modal-panel {
     transform-origin: center;
     will-change: transform, opacity;
+}
+.gallery-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(160, 32, 240, 0.42);
+    backdrop-filter: blur(22px) saturate(155%);
+    -webkit-backdrop-filter: blur(22px) saturate(155%);
+    z-index: 140;
+    animation: gallery-overlay-fade 140ms ease-out;
+}
+.gallery-overlay.hidden {
+    display: none;
+}
+.gallery-overlay-stage {
+    position: relative;
+    width: min(92vw, 1100px);
+    height: min(84vh, 760px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: gallery-overlay-pop 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.gallery-overlay-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    border-radius: 1rem;
+    box-shadow: 0 22px 48px -28px rgba(45, 38, 53, 0.45);
+}
+.gallery-overlay-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+.gallery-overlay-nav.prev {
+    left: 1.5rem;
+}
+.gallery-overlay-nav.next {
+    right: 1.5rem;
+}
+.gallery-overlay-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 2;
+}
+@keyframes gallery-overlay-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes gallery-overlay-pop {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 </style>
 </head>
@@ -658,7 +755,7 @@ S2 <span class="count-pill ml-2 text-[10px]" id="count-S2">0</span>
 <div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-6 overflow-hidden" id="project-modal">
 <div class="absolute inset-0 bg-primary/25 backdrop-blur-sm" id="modal-backdrop" onclick="closeModal()"></div>
 <div class="project-modal-panel relative w-full max-w-6xl max-h-[95vh] bg-surface-container-lowest rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant/15">
-<div class="flex items-center justify-between px-8 py-5 border-b border-outline-variant/10 bg-surface-container-lowest/95 backdrop-blur-md sticky top-0 z-10 transition-all duration-500" id="modal-header">
+<div class="flex items-center justify-between px-8 py-5 border-b border-outline-variant/10 bg-surface-container-lowest/95 backdrop-blur-md sticky top-0 z-10 transition-all duration-300" id="modal-header">
 <div class="flex items-center gap-3">
 <span class="inline-flex items-center px-3 py-1 bg-secondary-container text-primary rounded-full text-[10px] font-bold tracking-widest uppercase font-label" id="modal-semester">S8</span>
 <span class="text-secondary font-label text-sm font-medium tracking-tight" id="modal-batch">Academic Year 2024</span>
@@ -705,31 +802,13 @@ Loading abstract...
 </section>
 </div>
 <div class="lg:w-[380px] space-y-6 order-1 lg:order-2 sidebar-col layout-transition">
-<div class="relative group rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm aspect-[4/3] bg-surface-container cursor-zoom-in gallery-trigger" id="gallery-trigger" onclick="toggleGalleryExpansion(event)">
-<div class="close-zone hidden group-[.is-expanded]:block"></div>
-<div class="w-full h-full flex items-center justify-center overflow-hidden">
-<img alt="Project view" class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105" id="modal-main-image" src=""/>
+<div class="relative group rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm aspect-[4/3] bg-surface-container cursor-zoom-in gallery-trigger" id="gallery-trigger" onclick="openGalleryOverlay(event)">
+<div class="gallery-image-frame w-full h-full flex items-center justify-center overflow-hidden">
+<img alt="Project view" class="w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-105" id="modal-main-image" src=""/>
 </div>
 <div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none group-[.is-expanded]:hidden">
 <div class="bg-white/90 p-3 rounded-full text-primary shadow-lg scale-90 group-hover:scale-100 transition-transform">
 <span class="material-symbols-outlined">fullscreen</span>
-</div>
-</div>
-<div class="nav-arrows absolute inset-0 flex items-center justify-between px-8 md:px-24 pointer-events-none">
-<button class="pointer-events-auto w-16 h-16 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/25 hover:scale-110 active:scale-90 transition-all shadow-2xl impact-button icon-button" id="modal-prev-btn" onclick="event.stopPropagation(); modalPrevSlide();">
-<span class="material-symbols-outlined text-4xl">chevron_left</span>
-</button>
-<button class="pointer-events-auto w-16 h-16 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/25 hover:scale-110 active:scale-90 transition-all shadow-2xl impact-button icon-button" id="modal-next-btn" onclick="event.stopPropagation(); modalNextSlide();">
-<span class="material-symbols-outlined text-4xl">chevron_right</span>
-</button>
-</div>
-<button class="absolute top-10 right-10 opacity-0 group-[.is-expanded]:opacity-100 transition-all duration-500 w-14 h-14 flex items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-xl border border-white/20 hover:bg-white/30 hover:rotate-90 pointer-events-none group-[.is-expanded]:pointer-events-auto z-[60] impact-button icon-button" onclick="event.stopPropagation(); toggleGalleryExpansion(event);">
-<span class="material-symbols-outlined text-3xl">close</span>
-</button>
-<div class="absolute bottom-16 left-1/2 -translate-x-1/2 opacity-0 group-[.is-expanded]:opacity-100 transition-all transform translate-y-8 group-[.is-expanded]:translate-y-0 duration-800 delay-300 pointer-events-none w-max">
-<div class="bg-white/10 backdrop-blur-xl px-10 py-5 rounded-full border border-white/15 flex items-center gap-5 shadow-2xl">
-<div class="w-3 h-3 rounded-full bg-primary-fixed-dim animate-pulse shadow-[0_0_12px_rgba(167,200,255,0.6)]"></div>
-<span class="text-white font-label text-xs uppercase tracking-[0.25em] font-bold" id="expanded-image-caption">Project Visualization</span>
 </div>
 </div>
 </div>
@@ -764,8 +843,22 @@ Loading abstract...
 </div>
 </div>
 </div>
-<div class="px-8 py-4 bg-surface-container-lowest border-t border-outline-variant/10 flex justify-end gap-3 transition-all duration-500" id="modal-footer">
+<div class="px-8 py-4 bg-surface-container-lowest border-t border-outline-variant/10 flex justify-end gap-3 transition-all duration-300" id="modal-footer">
 <button class="px-6 py-2 text-secondary font-semibold hover:text-text-main transition-colors impact-button" onclick="closeModal()">Close</button>
+</div>
+<div class="gallery-overlay hidden" id="gallery-overlay" onclick="closeGalleryOverlay(event)">
+<button class="gallery-overlay-close w-12 h-12 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all impact-button icon-button" onclick="event.stopPropagation(); closeGalleryOverlay();">
+<span class="material-symbols-outlined text-3xl">close</span>
+</button>
+<button class="gallery-overlay-nav prev w-16 h-16 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all shadow-2xl impact-button icon-button" id="gallery-overlay-prev" onclick="event.stopPropagation(); modalPrevSlide();">
+<span class="material-symbols-outlined text-4xl">chevron_left</span>
+</button>
+<div class="gallery-overlay-stage" onclick="event.stopPropagation()">
+<img alt="Expanded project view" class="gallery-overlay-image" id="gallery-overlay-image" src=""/>
+</div>
+<button class="gallery-overlay-nav next w-16 h-16 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all shadow-2xl impact-button icon-button" id="gallery-overlay-next" onclick="event.stopPropagation(); modalNextSlide();">
+<span class="material-symbols-outlined text-4xl">chevron_right</span>
+</button>
 </div>
 </div>
 </div>
@@ -837,9 +930,54 @@ function normalizeSheetRow(row, fallbackSemester) {
         liveURL: valueAt(6),
         videoLink: valueAt(7),
         pdfLink: valueAt(8),
-        imageURLs: valueAt(9),
+        imageURLs: normalizeImageUrls(valueAt(9)),
         availability: valueAt(10) || "Unknown"
     };
+}
+
+function normalizeImageUrls(rawValue) {
+    if (!rawValue) {
+        return "";
+    }
+
+    return rawValue
+        .split(",")
+        .map((url) => resolveImageUrl(url))
+        .filter(Boolean)
+        .join(",");
+}
+
+function resolveImageUrl(url) {
+    const trimmedUrl = url.trim();
+
+    if (!trimmedUrl) {
+        return "";
+    }
+
+    if (!trimmedUrl.includes("drive.google.com")) {
+        return trimmedUrl;
+    }
+
+    const driveFileId = extractDriveFileId(trimmedUrl);
+    if (!driveFileId) {
+        return trimmedUrl;
+    }
+
+    return `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w1600`;
+}
+
+function extractDriveFileId(url) {
+    const filePathMatch = url.match(/\/file\/d\/([^/]+)/);
+    if (filePathMatch) {
+        return filePathMatch[1];
+    }
+
+    try {
+        const parsedUrl = new URL(url);
+        return parsedUrl.searchParams.get("id") || "";
+    } catch (error) {
+        return "";
+    }
 }
 
 async function fetchAllProjects() {
@@ -914,7 +1052,7 @@ function renderCards(projects) {
             <div class="project-card reveal-card ${revealVariant} flex flex-col rounded-[1.5rem] overflow-hidden cursor-pointer group" onclick="openModal(${originalIndex})">
 <div class="h-40 bg-surface-bright relative overflow-hidden">
                     ${firstImage
-                        ? `<img alt="${p.projectName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="${firstImage}"/>`
+                        ? `<img alt="${p.projectName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" src="${firstImage}"/>`
                         : `<div class="w-full h-full flex items-center justify-center text-6xl font-black text-primary/5 uppercase">${p.projectName.charAt(0)}</div>`
                     }
                     <div class="absolute top-3 left-3 flex items-center gap-2">
@@ -982,30 +1120,41 @@ function initializeProjectCardReveal() {
     });
 }
 
-function toggleGalleryExpansion() {
-    const container = document.getElementById("project-container");
-    const trigger = document.getElementById("gallery-trigger");
-    const header = document.getElementById("modal-header");
-    const footer = document.getElementById("modal-footer");
-    const isCurrentlyExpanded = container.classList.contains("is-expanded");
-
-    if (isCurrentlyExpanded) {
-        container.classList.remove("is-expanded");
-        trigger.classList.remove("is-expanded");
-        header.style.opacity = "1";
-        header.style.transform = "translateY(0)";
-        footer.style.opacity = "1";
-        footer.style.transform = "translateY(0)";
-        container.style.overflowY = "auto";
-    } else {
-        container.classList.add("is-expanded");
-        trigger.classList.add("is-expanded");
-        header.style.opacity = "0";
-        header.style.transform = "translateY(-20px)";
-        footer.style.opacity = "0";
-        footer.style.transform = "translateY(20px)";
-        container.style.overflowY = "hidden";
+function openGalleryOverlay(event) {
+    if (event) {
+        event.stopPropagation();
     }
+
+    if (modalImages.length === 0) {
+        return;
+    }
+
+    const overlay = document.getElementById("gallery-overlay");
+    overlay.classList.remove("hidden");
+    updateGalleryOverlay();
+}
+
+function closeGalleryOverlay(event) {
+    if (event && event.target !== event.currentTarget) {
+        return;
+    }
+
+    document.getElementById("gallery-overlay").classList.add("hidden");
+}
+
+function updateGalleryOverlay() {
+    const overlayImage = document.getElementById("gallery-overlay-image");
+    const overlayPrev = document.getElementById("gallery-overlay-prev");
+    const overlayNext = document.getElementById("gallery-overlay-next");
+    const hasMultipleImages = modalImages.length > 1;
+
+    if (!overlayImage) {
+        return;
+    }
+
+    overlayImage.src = modalImages[modalImageIndex] || "";
+    overlayPrev.classList.toggle("hidden", !hasMultipleImages);
+    overlayNext.classList.toggle("hidden", !hasMultipleImages);
 }
 
 function openModal(index) {
@@ -1096,7 +1245,7 @@ function openModal(index) {
             backdropFilter: "blur(4px)"
         }
     ], {
-        duration: 170,
+        duration: 120,
         easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
         fill: "both"
     });
@@ -1111,15 +1260,12 @@ function openModal(index) {
             transform: "translateY(0) scale(1)"
         }
     ], {
-        duration: 220,
+        duration: 165,
         easing: "cubic-bezier(0.2, 0.8, 0.2, 1)",
         fill: "both"
     });
 
-    const container = document.getElementById("project-container");
-    if (container.classList.contains("is-expanded")) {
-        toggleGalleryExpansion();
-    }
+    closeGalleryOverlay();
 }
 
 async function closeModal() {
@@ -1144,7 +1290,7 @@ async function closeModal() {
             backdropFilter: "blur(0px)"
         }
     ], {
-        duration: 150,
+        duration: 110,
         easing: "cubic-bezier(0.4, 0, 1, 1)",
         fill: "both"
     });
@@ -1159,7 +1305,7 @@ async function closeModal() {
             transform: "translateY(14px) scale(0.975)"
         }
     ], {
-        duration: 170,
+        duration: 130,
         easing: "cubic-bezier(0.4, 0, 1, 1)",
         fill: "both"
     });
@@ -1180,12 +1326,28 @@ async function closeModal() {
 
 function updateModalImage() {
     const img = document.getElementById("modal-main-image");
+    const overlayImage = document.getElementById("gallery-overlay-image");
+    const prevBtn = document.getElementById("gallery-overlay-prev");
+    const nextBtn = document.getElementById("gallery-overlay-next");
+
     if (modalImages.length > 0) {
         img.src = modalImages[modalImageIndex];
-        document.getElementById("modal-prev-btn").classList.toggle("hidden", modalImages.length <= 1);
-        document.getElementById("modal-next-btn").classList.toggle("hidden", modalImages.length <= 1);
+        if (overlayImage) {
+            overlayImage.src = modalImages[modalImageIndex];
+        }
+        if (prevBtn && nextBtn) {
+            prevBtn.classList.toggle("hidden", modalImages.length <= 1);
+            nextBtn.classList.toggle("hidden", modalImages.length <= 1);
+        }
     } else {
         img.src = "";
+        if (overlayImage) {
+            overlayImage.src = "";
+        }
+        if (prevBtn && nextBtn) {
+            prevBtn.classList.add("hidden");
+            nextBtn.classList.add("hidden");
+        }
     }
 }
 
@@ -1365,9 +1527,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("keydown", (e) => {
         const modal = document.getElementById("project-modal");
+        const galleryOverlay = document.getElementById("gallery-overlay");
         if (e.key === "Escape") {
-            if (document.getElementById("project-container").classList.contains("is-expanded")) {
-                toggleGalleryExpansion();
+            if (!galleryOverlay.classList.contains("hidden")) {
+                closeGalleryOverlay();
             } else if (!modal.classList.contains("hidden")) {
                 closeModal();
             }
