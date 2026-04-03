@@ -659,11 +659,37 @@ body {
     border-radius: 1rem;
     box-shadow: 0 22px 48px -28px rgba(45, 38, 53, 0.45);
 }
+.watermark-badge {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 80;
+    padding: 0.32rem 0.62rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(160, 32, 240, 0.26);
+    background: rgba(255, 255, 255, 0.72);
+    color: rgba(91, 55, 128, 0.82);
+    font-family: Inter, sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+    box-shadow: 0 10px 22px -16px rgba(95, 39, 147, 0.42);
+}
 .gallery-overlay-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
+}
+#modal-image-prev.is-clicked,
+#modal-image-next.is-clicked,
+.gallery-overlay-nav.is-clicked {
+    animation: overlay-nav-click-flash 180ms ease-out;
 }
 .gallery-overlay-nav.prev {
     left: 1.5rem;
@@ -691,10 +717,25 @@ body {
         transform: translateY(0) scale(1);
     }
 }
+@keyframes overlay-nav-click-flash {
+    0% {
+        background: rgba(255, 255, 255, 0.16);
+        box-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.45);
+    }
+    50% {
+        background: rgba(255, 255, 255, 0.34);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.22), 0 20px 44px -22px rgba(0, 0, 0, 0.45);
+    }
+    100% {
+        background: rgba(255, 255, 255, 0.16);
+        box-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.45);
+    }
+}
 </style>
 </head>
 <body class="bg-surface font-body text-text-main antialiased bg-pattern">
 <canvas aria-hidden="true" class="interactive-dot-field" id="interactive-dot-field"></canvas>
+<div class="watermark-badge">By CSE-B 2027 batch</div>
 <div class="page-shell">
 <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline transition-all duration-300">
 <div class="site-container flex justify-between items-center py-4">
@@ -763,7 +804,7 @@ S2 <span class="count-pill ml-2 text-[10px]" id="count-S2">0</span>
 </div>
 </footer>
 <div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-6 overflow-hidden" id="project-modal">
-<div class="absolute inset-0 bg-primary/25 backdrop-blur-sm" id="modal-backdrop" onclick="closeModal()"></div>
+<div class="absolute inset-0 bg-primary/25 backdrop-blur-sm" id="modal-backdrop" onclick="closeModal(event, 'backdrop')"></div>
 <div class="project-modal-panel relative w-full max-w-6xl max-h-[95vh] bg-surface-container-lowest rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant/15">
 <div class="flex items-center justify-between px-8 py-5 border-b border-outline-variant/10 bg-surface-container-lowest/95 backdrop-blur-md sticky top-0 z-10 transition-all duration-300" id="modal-header">
 <div class="flex items-center gap-3">
@@ -816,6 +857,13 @@ Loading abstract...
 <div class="gallery-image-frame w-full h-full flex items-center justify-center overflow-hidden">
 <img alt="Project view" class="w-full h-full object-cover transition-all duration-300 ease-out group-hover:scale-105" id="modal-main-image" src=""/>
 </div>
+<div class="absolute top-3 right-3 z-10 px-3 py-1 rounded-full bg-black/45 text-white text-xs font-bold tracking-wide backdrop-blur-sm border border-white/20" id="modal-image-count">0 / 0</div>
+<button class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/45 text-white border border-white/25 backdrop-blur-sm flex items-center justify-center opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200 hover:bg-black/60 impact-button icon-button" id="modal-image-prev" onclick="event.stopPropagation(); modalPrevSlide();" type="button" aria-label="Previous image">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/45 text-white border border-white/25 backdrop-blur-sm flex items-center justify-center opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200 hover:bg-black/60 impact-button icon-button" id="modal-image-next" onclick="event.stopPropagation(); modalNextSlide();" type="button" aria-label="Next image">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
 <div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none group-[.is-expanded]:hidden">
 <div class="bg-white/90 p-3 rounded-full text-primary shadow-lg scale-90 group-hover:scale-100 transition-transform">
 <span class="material-symbols-outlined">fullscreen</span>
@@ -860,13 +908,14 @@ Loading abstract...
 <button class="gallery-overlay-close w-12 h-12 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all impact-button icon-button" onclick="event.stopPropagation(); closeGalleryOverlay();">
 <span class="material-symbols-outlined text-3xl">close</span>
 </button>
-<button class="gallery-overlay-nav prev w-16 h-16 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all shadow-2xl impact-button icon-button" id="gallery-overlay-prev" onclick="event.stopPropagation(); modalPrevSlide();">
+<div class="absolute top-6 left-1/2 -translate-x-1/2 z-[150] px-4 py-1.5 rounded-full bg-black/45 text-white text-sm font-bold tracking-wide backdrop-blur-md border border-white/25" id="gallery-overlay-count">0 / 0</div>
+<button class="gallery-overlay-nav prev w-16 h-16 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all shadow-2xl icon-button" id="gallery-overlay-prev" onclick="event.stopPropagation(); playOverlayNavFeedback(this); modalPrevSlide();">
 <span class="material-symbols-outlined text-4xl">chevron_left</span>
 </button>
 <div class="gallery-overlay-stage" onclick="event.stopPropagation()">
 <img alt="Expanded project view" class="gallery-overlay-image" id="gallery-overlay-image" src=""/>
 </div>
-<button class="gallery-overlay-nav next w-16 h-16 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all shadow-2xl impact-button icon-button" id="gallery-overlay-next" onclick="event.stopPropagation(); modalNextSlide();">
+<button class="gallery-overlay-nav next w-16 h-16 flex items-center justify-center rounded-full bg-white/16 text-white backdrop-blur-xl border border-white/20 hover:bg-white/24 transition-all shadow-2xl icon-button" id="gallery-overlay-next" onclick="event.stopPropagation(); playOverlayNavFeedback(this); modalNextSlide();">
 <span class="material-symbols-outlined text-4xl">chevron_right</span>
 </button>
 </div>
@@ -883,6 +932,7 @@ let modalImages = [];
 let projectCardRevealObserver;
 let modalAnimationToken = 0;
 let isModalClosing = false;
+let suppressBackdropCloseUntil = 0;
 
 async function loadAllProjects() {
     const grid = document.getElementById("cards-grid");
@@ -1145,17 +1195,45 @@ function openGalleryOverlay(event) {
 }
 
 function closeGalleryOverlay(event) {
-    if (event && event.target !== event.currentTarget) {
-        return;
+    if (event) {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+        // Block the same interaction from falling through to the parent modal backdrop.
+        event.preventDefault();
+        event.stopPropagation();
+        suppressBackdropCloseUntil = Date.now() + 260;
     }
 
     document.getElementById("gallery-overlay").classList.add("hidden");
+}
+
+function playOverlayNavFeedback(button) {
+    if (!button) {
+        return;
+    }
+    button.classList.remove("is-clicked");
+    void button.offsetWidth;
+    button.classList.add("is-clicked");
+    setTimeout(() => {
+        button.classList.remove("is-clicked");
+    }, 190);
+}
+
+function triggerArrowKeyFeedback(direction) {
+    const overlay = document.getElementById("gallery-overlay");
+    const useOverlayNav = overlay && !overlay.classList.contains("hidden");
+    const targetId = direction === "next"
+        ? (useOverlayNav ? "gallery-overlay-next" : "modal-image-next")
+        : (useOverlayNav ? "gallery-overlay-prev" : "modal-image-prev");
+    playOverlayNavFeedback(document.getElementById(targetId));
 }
 
 function updateGalleryOverlay() {
     const overlayImage = document.getElementById("gallery-overlay-image");
     const overlayPrev = document.getElementById("gallery-overlay-prev");
     const overlayNext = document.getElementById("gallery-overlay-next");
+    const overlayCount = document.getElementById("gallery-overlay-count");
     const hasMultipleImages = modalImages.length > 1;
 
     if (!overlayImage) {
@@ -1165,6 +1243,9 @@ function updateGalleryOverlay() {
     overlayImage.src = modalImages[modalImageIndex] || "";
     overlayPrev.classList.toggle("hidden", !hasMultipleImages);
     overlayNext.classList.toggle("hidden", !hasMultipleImages);
+    if (overlayCount) {
+        overlayCount.textContent = modalImages.length > 0 ? `${modalImageIndex + 1} / ${modalImages.length}` : "0 / 0";
+    }
 }
 
 function openModal(index) {
@@ -1278,7 +1359,15 @@ function openModal(index) {
     closeGalleryOverlay();
 }
 
-async function closeModal() {
+async function closeModal(event, source = "manual") {
+    if (source === "backdrop" && Date.now() < suppressBackdropCloseUntil) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        return;
+    }
+
     const modal = document.getElementById("project-modal");
 
     if (modal.classList.contains("hidden") || isModalClosing) {
@@ -1339,6 +1428,11 @@ function updateModalImage() {
     const overlayImage = document.getElementById("gallery-overlay-image");
     const prevBtn = document.getElementById("gallery-overlay-prev");
     const nextBtn = document.getElementById("gallery-overlay-next");
+    const overlayCount = document.getElementById("gallery-overlay-count");
+    const inlinePrevBtn = document.getElementById("modal-image-prev");
+    const inlineNextBtn = document.getElementById("modal-image-next");
+    const imageCount = document.getElementById("modal-image-count");
+    const hasMultipleImages = modalImages.length > 1;
 
     if (modalImages.length > 0) {
         img.src = modalImages[modalImageIndex];
@@ -1346,8 +1440,18 @@ function updateModalImage() {
             overlayImage.src = modalImages[modalImageIndex];
         }
         if (prevBtn && nextBtn) {
-            prevBtn.classList.toggle("hidden", modalImages.length <= 1);
-            nextBtn.classList.toggle("hidden", modalImages.length <= 1);
+            prevBtn.classList.toggle("hidden", !hasMultipleImages);
+            nextBtn.classList.toggle("hidden", !hasMultipleImages);
+        }
+        if (overlayCount) {
+            overlayCount.textContent = `${modalImageIndex + 1} / ${modalImages.length}`;
+        }
+        if (inlinePrevBtn && inlineNextBtn) {
+            inlinePrevBtn.classList.toggle("hidden", !hasMultipleImages);
+            inlineNextBtn.classList.toggle("hidden", !hasMultipleImages);
+        }
+        if (imageCount) {
+            imageCount.textContent = `${modalImageIndex + 1} / ${modalImages.length}`;
         }
     } else {
         img.src = "";
@@ -1357,6 +1461,16 @@ function updateModalImage() {
         if (prevBtn && nextBtn) {
             prevBtn.classList.add("hidden");
             nextBtn.classList.add("hidden");
+        }
+        if (overlayCount) {
+            overlayCount.textContent = "0 / 0";
+        }
+        if (inlinePrevBtn && inlineNextBtn) {
+            inlinePrevBtn.classList.add("hidden");
+            inlineNextBtn.classList.add("hidden");
+        }
+        if (imageCount) {
+            imageCount.textContent = "0 / 0";
         }
     }
 }
@@ -1547,9 +1661,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (!modal.classList.contains("hidden")) {
             if (e.key === "ArrowRight" && modalImages.length > 0) {
+                triggerArrowKeyFeedback("next");
                 modalNextSlide();
             }
             if (e.key === "ArrowLeft" && modalImages.length > 0) {
+                triggerArrowKeyFeedback("prev");
                 modalPrevSlide();
             }
         }
