@@ -4,6 +4,10 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CSE Project Hub | Department Project Repository</title>
+<link href="https://docs.google.com" rel="preconnect"/>
+<link href="https://drive.google.com" rel="preconnect"/>
+<link href="https://docs.google.com" rel="dns-prefetch"/>
+<link href="https://drive.google.com" rel="dns-prefetch"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -933,6 +937,7 @@ let projectCardRevealObserver;
 let modalAnimationToken = 0;
 let isModalClosing = false;
 let suppressBackdropCloseUntil = 0;
+const imagePreloadCache = new Set();
 
 async function loadAllProjects() {
     const grid = document.getElementById("cards-grid");
@@ -940,6 +945,7 @@ async function loadAllProjects() {
 
     try {
         allProjects = await fetchAllProjects();
+        preloadProjectImages(allProjects);
         updateCounts();
         setupBatchDropdown();
         renderCards(allProjects);
@@ -1087,6 +1093,37 @@ function updateCounts() {
     });
 }
 
+function preloadImage(url) {
+    if (!url || imagePreloadCache.has(url)) {
+        return;
+    }
+
+    imagePreloadCache.add(url);
+    const img = new Image();
+    img.decoding = "async";
+    img.fetchPriority = "high";
+    img.src = url;
+}
+
+function preloadProjectImages(projects, limit = 6) {
+    projects
+        .map((project) => project.imageURLs ? project.imageURLs.split(",")[0].trim() : "")
+        .filter(Boolean)
+        .slice(0, limit)
+        .forEach(preloadImage);
+}
+
+function preloadModalNeighborImages() {
+    if (modalImages.length <= 1) {
+        return;
+    }
+
+    const nextIndex = (modalImageIndex + 1) % modalImages.length;
+    const prevIndex = (modalImageIndex - 1 + modalImages.length) % modalImages.length;
+    preloadImage(modalImages[nextIndex]);
+    preloadImage(modalImages[prevIndex]);
+}
+
 function renderCards(projects) {
     const grid = document.getElementById("cards-grid");
     const revealVariants = ["reveal-rise", "reveal-slide-left", "reveal-slide-right", "reveal-pop"];
@@ -1101,18 +1138,19 @@ function renderCards(projects) {
         return;
     }
 
-    grid.innerHTML = projects.map((p) => {
+    grid.innerHTML = projects.map((p, visibleIndex) => {
         const originalIndex = allProjects.indexOf(p);
         const firstImage = p.imageURLs ? p.imageURLs.split(",")[0].trim() : "";
         const isAvailable = p.availability.toLowerCase() === "available";
         const availColor = isAvailable ? "bg-green-500" : "bg-red-500";
         const revealVariant = revealVariants[originalIndex % revealVariants.length];
+        const prioritizeImage = visibleIndex < 4;
 
         return `
             <div class="project-card reveal-card ${revealVariant} flex flex-col rounded-[1.5rem] overflow-hidden cursor-pointer group" onclick="openModal(${originalIndex})">
 <div class="h-40 bg-surface-bright relative overflow-hidden">
                     ${firstImage
-                        ? `<img alt="${p.projectName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" src="${firstImage}"/>`
+                        ? `<img alt="${p.projectName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" decoding="async" fetchpriority="${prioritizeImage ? "high" : "auto"}" loading="${prioritizeImage ? "eager" : "lazy"}" src="${firstImage}"/>`
                         : `<div class="w-full h-full flex items-center justify-center text-6xl font-black text-primary/5 uppercase">${p.projectName.charAt(0)}</div>`
                     }
                     <div class="absolute top-3 left-3 flex items-center gap-2">
@@ -1241,6 +1279,7 @@ function updateGalleryOverlay() {
     }
 
     overlayImage.src = modalImages[modalImageIndex] || "";
+    preloadModalNeighborImages();
     overlayPrev.classList.toggle("hidden", !hasMultipleImages);
     overlayNext.classList.toggle("hidden", !hasMultipleImages);
     if (overlayCount) {
@@ -1266,6 +1305,9 @@ function openModal(index) {
 
     modalImages = p.imageURLs ? p.imageURLs.split(",").map((u) => u.trim()).filter(Boolean) : [];
     modalImageIndex = 0;
+    if (modalImages.length > 0) {
+        preloadImage(modalImages[0]);
+    }
     updateModalImage();
 
     const tags = [p.semester, p.batch, p.availability].filter(Boolean);
@@ -1439,6 +1481,7 @@ function updateModalImage() {
         if (overlayImage) {
             overlayImage.src = modalImages[modalImageIndex];
         }
+        preloadModalNeighborImages();
         if (prevBtn && nextBtn) {
             prevBtn.classList.toggle("hidden", !hasMultipleImages);
             nextBtn.classList.toggle("hidden", !hasMultipleImages);
