@@ -49,7 +49,7 @@ function renderCards(projects) {
                  onclick="openModal(${originalIndex})">
                 <div class="h-40 bg-surface-bright relative overflow-hidden">
                     ${firstImage
-                        ? `<img alt="${p.projectName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="${firstImage}"/>`
+                        ? buildImageMarkup(firstImage, p.projectName, "w-full h-full object-cover group-hover:scale-110 transition-transform duration-700")
                         : `<div class="w-full h-full flex items-center justify-center text-6xl font-black text-primary/10 uppercase">${p.projectName.charAt(0)}</div>`
                     }
                     <div class="absolute top-3 left-3 flex gap-1.5">
@@ -177,7 +177,7 @@ function openModal(index) {
     if (images.length > 0) {
         scrollContainer.innerHTML = images.map(img => `
             <div class="flex-shrink-0 w-full md:w-[85%] aspect-video rounded-xl overflow-hidden snap-start">
-                <img alt="Project preview" class="w-full h-full object-cover" src="${img}"/>
+                ${buildImageMarkup(img, "Project preview", "w-full h-full object-cover")}
             </div>`).join("");
         dotContainer.innerHTML = images.map((_, i) => `
             <div class="w-1.5 h-1 rounded-full ${i === 0 ? "bg-primary w-6" : "bg-outline-variant"} transition-all duration-300"></div>
@@ -277,4 +277,111 @@ function createRipple(event) {
     if (existing) existing.remove();
     button.appendChild(circle);
     setTimeout(() => circle.remove(), 600);
+}
+
+function resolveImageUrl(url) {
+    const trimmedUrl = url.trim();
+
+    if (!trimmedUrl) {
+        return "";
+    }
+
+    if (!trimmedUrl.includes("drive.google.com")) {
+        return trimmedUrl;
+    }
+
+    const driveFileId = extractDriveFileId(trimmedUrl);
+    if (!driveFileId) {
+        return trimmedUrl;
+    }
+
+    return `https://drive.google.com/uc?export=view&id=${driveFileId}`;
+}
+
+function extractDriveFileId(url) {
+    const filePathMatch = url.match(/\/file\/d\/([^/]+)/);
+    if (filePathMatch) {
+        return filePathMatch[1];
+    }
+
+    try {
+        const parsedUrl = new URL(url);
+        return parsedUrl.searchParams.get("id") || "";
+    } catch (error) {
+        return "";
+    }
+}
+
+function buildImageCandidates(url) {
+    const trimmedUrl = url.trim();
+
+    if (!trimmedUrl) {
+        return [];
+    }
+
+    if (!trimmedUrl.includes("drive.google.com")) {
+        return [trimmedUrl];
+    }
+
+    const driveFileId = extractDriveFileId(trimmedUrl);
+    if (!driveFileId) {
+        return [trimmedUrl];
+    }
+
+    return [
+        `https://drive.google.com/uc?export=view&id=${driveFileId}`,
+        `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w1600`
+    ];
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function buildImageMarkup(url, alt, className, fetchPriority = "auto") {
+    const candidates = buildImageCandidates(url);
+    const primary = candidates[0] || "";
+    const candidateData = encodeURIComponent(JSON.stringify(candidates));
+    const loading = fetchPriority === "high" ? "eager" : "lazy";
+    const priorityAttr = fetchPriority ? `fetchpriority="${fetchPriority}"` : "";
+
+    if (!primary) {
+        return "";
+    }
+
+    return `<img alt="${escapeHtml(alt)}" class="${className}" decoding="async" ${priorityAttr} loading="${loading}" referrerpolicy="no-referrer" src="${escapeHtml(primary)}" data-image-candidates="${candidateData}" data-image-index="0" onerror="handleImageError(event)"/>`;
+}
+
+function handleImageError(event) {
+    const img = event.currentTarget;
+    if (!img || img.dataset.imageErrorHandled === "true") {
+        return;
+    }
+
+    let candidates = [];
+    try {
+        candidates = JSON.parse(decodeURIComponent(img.dataset.imageCandidates || "%5B%5D"));
+    } catch (error) {
+        candidates = [];
+    }
+
+    const currentIndex = Number.parseInt(img.dataset.imageIndex || "0", 10);
+    const nextIndex = Number.isFinite(currentIndex) ? currentIndex + 1 : 1;
+    const nextSource = candidates[nextIndex];
+
+    if (nextSource && nextSource !== img.src) {
+        img.dataset.imageIndex = String(nextIndex);
+        img.src = nextSource;
+        return;
+    }
+
+    img.dataset.imageErrorHandled = "true";
+    img.removeAttribute("src");
+    img.classList.add("image-load-failed");
+    img.alt = "Image unavailable";
 }
