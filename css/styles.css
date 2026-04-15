@@ -230,10 +230,16 @@ body {
     background: transparent;
     border: 0;
     box-shadow: none;
+    color-scheme: light;
 }
 
 #batch-filter:hover {
     box-shadow: none;
+}
+
+#batch-filter option {
+    background-color: #ffffff;
+    color: #2d2635;
 }
 
 #batch-filter::-ms-expand {
