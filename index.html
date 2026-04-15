@@ -51,7 +51,9 @@ tailwind.config = {
 </head>
 <body class="bg-surface font-body text-text-main antialiased">
 <canvas aria-hidden="true" class="interactive-dot-field" id="interactive-dot-field"></canvas>
-<div class="watermark-badge">By CSE-B 2027 batch</div>
+<div class="watermark-badge" id="watermark-badge">
+<span class="watermark-badge__text" data-watermark-text>By CSE-B 2027 batch</span>
+</div>
 <div class="page-shell">
 <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline transition-all duration-300">
 <div class="site-container flex justify-between items-center py-4">
@@ -1118,10 +1120,92 @@ function initializeInteractiveDotField() {
     });
 }
 
+function initializeWatermarkMorphing() {
+    const badge = document.getElementById("watermark-badge");
+    const textNode = badge ? badge.querySelector("[data-watermark-text]") : null;
+
+    if (!badge || !textNode) {
+        return;
+    }
+
+    const baseLabel = textNode.textContent.trim();
+    const teamNames = ["YADHU KRISHNAN R", "GEORGY BENOY", "JAN CHERIAN THOMAS", "FEBIN ABEY", "MIBEL GEORGY", "JESTY JOSE"];
+    const randomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let isHovering = false;
+    let activeNameIndex = 0;
+    let morphIntervalId = 0;
+    let cycleIntervalId = 0;
+
+    const stopMorphing = () => {
+        if (morphIntervalId) {
+            window.clearInterval(morphIntervalId);
+            morphIntervalId = 0;
+        }
+    };
+
+    const animateToLabel = (targetLabel, duration = 540) => {
+        stopMorphing();
+        const totalSteps = Math.max(10, Math.floor(duration / 30));
+        let currentStep = 0;
+
+        morphIntervalId = window.setInterval(() => {
+            currentStep += 1;
+            const progress = Math.min(1, currentStep / totalSteps);
+            const revealCount = Math.floor(targetLabel.length * progress);
+            let output = "";
+
+            for (let i = 0; i < targetLabel.length; i += 1) {
+                if (i < revealCount) {
+                    output += targetLabel[i];
+                } else {
+                    output += randomChars[Math.floor(Math.random() * randomChars.length)];
+                }
+            }
+
+            textNode.textContent = output;
+
+            if (progress >= 1) {
+                stopMorphing();
+                textNode.textContent = targetLabel;
+            }
+        }, 30);
+    };
+
+    const stopCycling = () => {
+        if (cycleIntervalId) {
+            window.clearInterval(cycleIntervalId);
+            cycleIntervalId = 0;
+        }
+    };
+
+    badge.addEventListener("mouseenter", () => {
+        isHovering = true;
+        badge.classList.add("is-morphing");
+        activeNameIndex = 0;
+        animateToLabel(teamNames[activeNameIndex], 500);
+        stopCycling();
+        cycleIntervalId = window.setInterval(() => {
+            if (!isHovering) {
+                return;
+            }
+            activeNameIndex = (activeNameIndex + 1) % teamNames.length;
+            animateToLabel(teamNames[activeNameIndex], 640);
+        }, 1450);
+    });
+
+    badge.addEventListener("mouseleave", () => {
+        isHovering = false;
+        badge.classList.remove("is-morphing");
+        stopCycling();
+        animateToLabel(baseLabel, 460);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadAllProjects();
     initializeInteractiveDotField();
     initializeHeroLighting();
+    initializeWatermarkMorphing();
 
     setupBatchFilter();
 

@@ -710,9 +710,25 @@ body {
     text-transform: uppercase;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    pointer-events: none;
+    pointer-events: auto;
     user-select: none;
+    cursor: default;
     box-shadow: 0 10px 22px -16px rgba(95, 39, 147, 0.42);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.watermark-badge:hover,
+.watermark-badge.is-morphing {
+    border-color: rgba(160, 32, 240, 0.48);
+    box-shadow: 0 14px 30px -16px rgba(95, 39, 147, 0.52);
+    transform: translateY(-1px);
+}
+
+.watermark-badge__text {
+    display: inline-block;
+    min-width: 18ch;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .gallery-overlay-nav {
