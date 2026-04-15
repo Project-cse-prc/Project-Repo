@@ -398,25 +398,33 @@ body {
 .hero-glass-container {
     position: relative;
     isolation: isolate;
+    overflow: hidden;
     --pointer-x: 50%;
     --pointer-y: 50%;
     --glow-opacity: 0;
     background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08)),
-        linear-gradient(160deg, rgba(160, 32, 240, 0.16), rgba(255, 255, 255, 0.08) 52%, rgba(160, 32, 240, 0.1));
+        radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.56), transparent 40%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.12)),
+        linear-gradient(160deg, rgba(160, 32, 240, 0.2), rgba(255, 255, 255, 0.08) 48%, rgba(31, 24, 54, 0.12));
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.14),
-        0 24px 60px -22px rgba(95, 39, 147, 0.34);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+        0 30px 80px -24px rgba(95, 39, 147, 0.42);
+    transition:
+        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.65s ease,
+        filter 0.65s ease;
+    filter: saturate(1.08) brightness(1.02);
 }
 
 .hero-glass-container:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px) scale(1.008);
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.58),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.18),
-        0 34px 70px -22px rgba(95, 39, 147, 0.38);
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+        0 42px 88px -24px rgba(95, 39, 147, 0.48);
+    filter: saturate(1.14) brightness(1.03);
 }
 
 .hero-glass-container::before {
@@ -424,11 +432,13 @@ body {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18) 14%, rgba(255, 255, 255, 0.05) 28%, transparent 52%);
+        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.24) 12%, rgba(255, 255, 255, 0.08) 24%, transparent 50%),
+        radial-gradient(circle at 18% 20%, rgba(160, 32, 240, 0.34), transparent 34%),
+        radial-gradient(circle at 82% 72%, rgba(255, 255, 255, 0.12), transparent 22%);
     pointer-events: none;
     z-index: 0;
     opacity: var(--glow-opacity);
-    transition: opacity 180ms ease;
+    transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hero-glass-container:hover::before {
@@ -441,60 +451,73 @@ body {
     inset: 1px;
     border-radius: inherit;
     background:
-        linear-gradient(120deg, rgba(255, 255, 255, 0.35), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.18)),
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 42%);
-    mix-blend-mode: screen;
-    opacity: 0.75;
+        conic-gradient(from 0deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.28), rgba(160, 32, 240, 0.58), rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.02));
+    filter: blur(16px);
+    opacity: 0.74;
     pointer-events: none;
     z-index: 0;
+    transform: scale(1.03) rotate(0deg);
+    animation: hero-border-spin 12s linear infinite;
 }
 
 .hero-glass-sheen {
     position: absolute;
     inset: 0;
-    background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.18) 36%, rgba(255, 255, 255, 0.04) 48%, transparent 64%);
-    transform: translateX(-35%);
-    opacity: 0.7;
+    background:
+        linear-gradient(115deg, transparent 16%, rgba(255, 255, 255, 0.24) 32%, rgba(255, 255, 255, 0.06) 46%, transparent 66%),
+        radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.2), transparent 22%);
+    transform: translateX(-44%) rotate(8deg);
+    opacity: 0.78;
     pointer-events: none;
     z-index: 0;
 }
 
 .hero-glass-container:hover .hero-glass-sheen {
-    animation: hero-sheen 4.5s ease-in-out infinite;
+    animation: hero-sheen 5s ease-in-out infinite;
 }
 
 .hero-glass-orb {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(4px);
+    filter: blur(8px);
     pointer-events: none;
     z-index: 0;
 }
 
 .hero-glass-orb.orb-a {
-    width: 12rem;
-    height: 12rem;
-    top: -4rem;
-    right: 8%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 62%, transparent 72%);
+    width: 16rem;
+    height: 16rem;
+    top: -5.5rem;
+    right: 4%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.05) 54%, transparent 72%);
 }
 
 .hero-glass-orb.orb-b {
-    width: 10rem;
-    height: 10rem;
-    bottom: -3rem;
-    left: 10%;
-    background: radial-gradient(circle, rgba(160, 32, 240, 0.2), rgba(160, 32, 240, 0.03) 65%, transparent 74%);
+    width: 14rem;
+    height: 14rem;
+    bottom: -4.5rem;
+    left: 6%;
+    background: radial-gradient(circle, rgba(160, 32, 240, 0.34), rgba(160, 32, 240, 0.05) 62%, transparent 76%);
 }
 
 @keyframes hero-sheen {
     0%,
     100% {
-        transform: translateX(-35%);
+        transform: translateX(-42%) rotate(8deg);
     }
 
     50% {
-        transform: translateX(35%);
+        transform: translateX(38%) rotate(8deg);
+    }
+}
+
+@keyframes hero-border-spin {
+    from {
+        transform: scale(1.03) rotate(0deg);
+    }
+
+    to {
+        transform: scale(1.03) rotate(360deg);
     }
 }
 
